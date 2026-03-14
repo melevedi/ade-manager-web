@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ADE Manager — Studio Pro</title>
+  <meta name="description" content="Gestione adempimenti fiscali per studi commercialisti" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════
+       LOGIN SCREEN
+  ══════════════════════════════════════════════ -->
+  <div id="login-screen" class="screen active">
+    <div class="login-bg">
+      <div class="login-orb orb-1"></div>
+      <div class="login-orb orb-2"></div>
+      <div class="login-orb orb-3"></div>
+    </div>
+    <div class="login-card">
+      <div class="login-logo">
+        <span class="logo-icon">⚡</span>
+        <span class="logo-text">ADE Manager</span>
+      </div>
+      <p class="login-subtitle">Gestione Adempimenti Fiscali</p>
+      <div class="login-form">
+        <div class="input-group">
+          <label>Username</label>
+          <input type="text" id="login-user" placeholder="Inserisci username" autocomplete="username" />
+        </div>
+        <div class="input-group">
+          <label>Password</label>
+          <input type="password" id="login-pass" placeholder="Inserisci password" autocomplete="current-password" />
+        </div>
+        <div id="login-error" class="login-error hidden">Credenziali non valide</div>
+        <button class="btn-login" onclick="doLogin()">Accedi</button>
+      </div>
+      <p class="login-hint">Demo: ADMIN / ADMIN</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       MAIN APP
+  ══════════════════════════════════════════════ -->
+  <div id="app-screen" class="screen">
+
+    <!-- SIDEBAR -->
+    <nav id="sidebar" class="sidebar">
+      <div class="sidebar-logo">
+        <span class="sidebar-logo-icon">⚡</span>
+        <span class="sidebar-logo-text">ADE</span>
+      </div>
+
+      <div class="nav-section-label">PRINCIPALE</div>
+      <ul class="nav-list">
+        <li><button class="nav-btn active" data-view="dashboard" onclick="navigate('dashboard', this)">
+          <span class="nav-icon">📊</span><span class="nav-label">Dashboard</span>
+        </button></li>
+        <li><button class="nav-btn" data-view="adempimenti" onclick="navigate('adempimenti', this)">
+          <span class="nav-icon">📋</span><span class="nav-label">Adempimenti</span>
+          <span class="nav-badge">12</span>
+        </button></li>
+        <li><button class="nav-btn" data-view="pratiche" onclick="navigate('pratiche', this)">
+          <span class="nav-icon">📂</span><span class="nav-label">Pratiche</span>
+        </button></li>
+        <li><button class="nav-btn" data-view="scadenze" onclick="navigate('scadenze', this)">
+          <span class="nav-icon">📅</span><span class="nav-label">Scadenze</span>
+          <span class="nav-badge urgent">3</span>
+        </button></li>
+      </ul>
+
+      <div class="nav-section-label">ANAGRAFICA</div>
+      <ul class="nav-list">
+        <li><button class="nav-btn" data-view="clienti" onclick="navigate('clienti', this)">
+          <span class="nav-icon">👥</span><span class="nav-label">Clienti</span>
+        </button></li>
+        <li><button class="nav-btn" data-view="intermediari" onclick="navigate('intermediari', this)">
+          <span class="nav-icon">🔑</span><span class="nav-label">Intermediari</span>
+        </button></li>
+        <li><button class="nav-btn" data-view="catalogo" onclick="navigate('catalogo', this)">
+          <span class="nav-icon">📚</span><span class="nav-label">Catalogo</span>
+        </button></li>
+      </ul>
+
+      <div class="nav-section-label">AVANZATO</div>
+      <ul class="nav-list">
+        <li><button class="nav-btn" data-view="automazioni" onclick="navigate('automazioni', this)">
+          <span class="nav-icon">🤖</span><span class="nav-label">Automazioni</span>
+        </button></li>
+        <li><button class="nav-btn" data-view="ader" onclick="navigate('ader', this)">
+          <span class="nav-icon">🏢</span><span class="nav-label">ADER</span>
+        </button></li>
+        <li><button class="nav-btn" data-view="fatture" onclick="navigate('fatture', this)">
+          <span class="nav-icon">📄</span><span class="nav-label">Fatture</span>
+        </button></li>
+      </ul>
+
+      <div class="sidebar-bottom">
+        <button class="nav-btn" data-view="impostazioni" onclick="navigate('impostazioni', this)">
+          <span class="nav-icon">⚙️</span><span class="nav-label">Impostazioni</span>
+        </button>
+        <button class="nav-btn logout-btn" onclick="doLogout()">
+          <span class="nav-icon">🚪</span><span class="nav-label">Esci</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- MAIN AREA -->
+    <div class="main-area">
+
+      <!-- HEADER -->
+      <header class="app-header">
+        <div class="header-left">
+          <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+          <div class="header-breadcrumb">
+            <span class="breadcrumb-studio">Studio Rossi &amp; Associati</span>
+            <span class="breadcrumb-sep">›</span>
+            <span id="header-page-name" class="breadcrumb-page">Dashboard</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="header-year-badge">Anno: <strong>2026</strong></div>
+          <div class="header-user">
+            <div class="user-avatar" id="user-avatar">A</div>
+            <div class="user-info">
+              <span id="user-name-display" class="user-name">ADMIN</span>
+              <span id="user-role-display" class="user-role">Admin</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- CONTENT VIEWS -->
+      <main class="content-area">
+
+        <!-- DASHBOARD -->
+        <div id="view-dashboard" class="view active" data-title="Dashboard">
+          <div class="view-header">
+            <h1 class="page-title">Dashboard</h1>
+            <p class="page-subtitle">Riepilogo attività dello studio — Marzo 2026</p>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card stat-blue">
+              <div class="stat-icon">👥</div>
+              <div class="stat-body">
+                <div class="stat-value">124</div>
+                <div class="stat-label">Clienti Attivi</div>
+              </div>
+              <div class="stat-trend up">+3 questo mese</div>
+            </div>
+            <div class="stat-card stat-orange">
+              <div class="stat-icon">📋</div>
+              <div class="stat-body">
+                <div class="stat-value">48</div>
+                <div class="stat-label">Adempimenti In Corso</div>
+              </div>
+              <div class="stat-trend">Su 312 totali</div>
+            </div>
+            <div class="stat-card stat-red">
+              <div class="stat-icon">⚠️</div>
+              <div class="stat-body">
+                <div class="stat-value">3</div>
+                <div class="stat-label">Scadenze Urgenti</div>
+              </div>
+              <div class="stat-trend urgent">Entro 7 giorni</div>
+            </div>
+            <div class="stat-card stat-green">
+              <div class="stat-icon">✅</div>
+              <div class="stat-body">
+                <div class="stat-value">87%</div>
+                <div class="stat-label">Completamento</div>
+              </div>
+              <div class="stat-trend up">+5% vs mese scorso</div>
+            </div>
+          </div>
+
+          <div class="dashboard-row">
+            <div class="dash-card">
+              <div class="dash-card-header">
+                <h3>⚡ Scadenze Imminenti</h3>
+                <button class="btn-link" onclick="navigate('scadenze', document.querySelector('[data-view=scadenze]'))">Vedi tutte →</button>
+              </div>
+              <div class="scadenze-list">
+                <div class="scadenza-item urgent">
+                  <div class="scad-dot red"></div>
+                  <div class="scad-info">
+                    <span class="scad-name">LIPE Febbraio 2026</span>
+                    <span class="scad-clients">32 clienti</span>
+                  </div>
+                  <div class="scad-date red">16/03/2026</div>
+                </div>
+                <div class="scadenza-item urgent">
+                  <div class="scad-dot orange"></div>
+                  <div class="scad-info">
+                    <span class="scad-name">F24 Ritenute Febbraio</span>
+                    <span class="scad-clients">18 clienti</span>
+                  </div>
+                  <div class="scad-date orange">17/03/2026</div>
+                </div>
+                <div class="scadenza-item">
+                  <div class="scad-dot yellow"></div>
+                  <div class="scad-info">
+                    <span class="scad-name">Tassa Vidimazione</span>
+                    <span class="scad-clients">7 clienti</span>
+                  </div>
+                  <div class="scad-date yellow">31/03/2026</div>
+                </div>
+                <div class="scadenza-item">
+                  <div class="scad-dot blue"></div>
+                  <div class="scad-info">
+                    <span class="scad-name">IVA Trimestrale Q1</span>
+                    <span class="scad-clients">45 clienti</span>
+                  </div>
+                  <div class="scad-date">16/05/2026</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="dash-card">
+              <div class="dash-card-header">
+                <h3>🔑 Credenziali ADE in Scadenza</h3>
+              </div>
+              <div class="cred-list">
+                <div class="cred-item">
+                  <div class="cred-avatar">RS</div>
+                  <div class="cred-info">
+                    <span class="cred-name">Rossi Stefano</span>
+                    <span class="cred-user">RSSSFN...</span>
+                  </div>
+                  <div class="cred-badge days-warning">12 gg</div>
+                </div>
+                <div class="cred-item">
+                  <div class="cred-avatar">BM</div>
+                  <div class="cred-info">
+                    <span class="cred-name">Bianchi Marco</span>
+                    <span class="cred-user">BNCMRC...</span>
+                  </div>
+                  <div class="cred-badge days-ok">45 gg</div>
+                </div>
+                <div class="cred-item">
+                  <div class="cred-avatar">VL</div>
+                  <div class="cred-info">
+                    <span class="cred-name">Verdi Luigi</span>
+                    <span class="cred-user">VRDLGU...</span>
+                  </div>
+                  <div class="cred-badge days-ok">67 gg</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="dash-card">
+              <div class="dash-card-header">
+                <h3>📊 Avanzamento Adempimenti</h3>
+              </div>
+              <div class="progress-list">
+                <div class="prog-item">
+                  <div class="prog-label"><span>LIPE</span><span>28/32</span></div>
+                  <div class="prog-bar"><div class="prog-fill" style="width:87%;background:var(--blue)"></div></div>
+                </div>
+                <div class="prog-item">
+                  <div class="prog-label"><span>Modello Unico</span><span>41/124</span></div>
+                  <div class="prog-bar"><div class="prog-fill" style="width:33%;background:var(--orange)"></div></div>
+                </div>
+                <div class="prog-item">
+                  <div class="prog-label"><span>Tassa Vidimazione</span><span>5/7</span></div>
+                  <div class="prog-bar"><div class="prog-fill" style="width:71%;background:var(--green)"></div></div>
+                </div>
+                <div class="prog-item">
+                  <div class="prog-label"><span>Sostituti d'imposta</span><span>12/18</span></div>
+                  <div class="prog-bar"><div class="prog-fill" style="width:66%;background:var(--purple)"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CLIENTI -->
+        <div id="view-clienti" class="view" data-title="Clienti">
+          <div class="view-header">
+            <div>
+              <h1 class="page-title">Clienti</h1>
+              <p class="page-subtitle">Gestione anagrafica clienti dello studio</p>
+            </div>
+            <div class="view-actions">
+              <button class="btn-secondary">📥 Importa Excel</button>
+              <button class="btn-primary">+ Nuovo Cliente</button>
+            </div>
+          </div>
+          <div class="table-card">
+            <div class="table-toolbar">
+              <input class="search-input" type="text" placeholder="🔍  Cerca cliente, CF, P.IVA..." />
+              <select class="filter-select">
+                <option>Tutti i gruppi</option>
+                <option>Persone Fisiche</option>
+                <option>Società</option>
+                <option>Enti</option>
+              </select>
+            </div>
+            <div class="table-wrapper">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Sigla</th>
+                    <th>Codice Fiscale</th>
+                    <th>P.IVA</th>
+                    <th>Gruppo</th>
+                    <th>Regime</th>
+                    <th class="col-actions">Azioni</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Alfa Srl</strong></td>
+                    <td><span class="badge">ALF</span></td>
+                    <td class="mono">12345678901</td>
+                    <td class="mono">12345678901</td>
+                    <td>Società</td>
+                    <td>Ordinario</td>
+                    <td class="col-actions"><button class="btn-icon" title="Modifica">✏️</button><button class="btn-icon" title="Elimina">🗑️</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Beta &amp; Associati</strong></td>
+                    <td><span class="badge">BET</span></td>
+                    <td class="mono">98765432109</td>
+                    <td class="mono">98765432109</td>
+                    <td>Studio</td>
+                    <td>Ordinario</td>
+                    <td class="col-actions"><button class="btn-icon" title="Modifica">✏️</button><button class="btn-icon" title="Elimina">🗑️</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Gamma Trading</strong></td>
+                    <td><span class="badge">GAM</span></td>
+                    <td class="mono">11122233344</td>
+                    <td class="mono">11122233344</td>
+                    <td>Società</td>
+                    <td>Forfettario</td>
+                    <td class="col-actions"><button class="btn-icon" title="Modifica">✏️</button><button class="btn-icon" title="Elimina">🗑️</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Delta Costruzioni Srl</strong></td>
+                    <td><span class="badge">DEL</span></td>
+                    <td class="mono">55566677788</td>
+                    <td class="mono">55566677788</td>
+                    <td>Società</td>
+                    <td>Ordinario</td>
+                    <td class="col-actions"><button class="btn-icon" title="Modifica">✏️</button><button class="btn-icon" title="Elimina">🗑️</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Rossi Mario</strong></td>
+                    <td><span class="badge">ROS</span></td>
+                    <td class="mono">RSSMRA80A01H501T</td>
+                    <td class="mono">—</td>
+                    <td>Persona Fisica</td>
+                    <td>Forfettario</td>
+                    <td class="col-actions"><button class="btn-icon" title="Modifica">✏️</button><button class="btn-icon" title="Elimina">🗑️</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="table-footer">
+              <span>5 clienti trovati</span>
+              <div class="pagination">
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ADEMPIMENTI -->
+        <div id="view-adempimenti" class="view" data-title="Adempimenti">
+          <div class="view-header">
+            <div>
+              <h1 class="page-title">Adempimenti</h1>
+              <p class="page-subtitle">Monitoraggio e gestione adempimenti per cliente</p>
+            </div>
+            <div class="view-actions">
+              <select class="filter-select">
+                <option>LIPE</option>
+                <option>Modello Unico</option>
+                <option>Tassa Vidimazione</option>
+                <option>Ad. Iva</option>
+                <option>Sostituti</option>
+              </select>
+              <select class="filter-select">
+                <option>Marzo 2026</option>
+                <option>Febbraio 2026</option>
+                <option>Gennaio 2026</option>
+              </select>
+            </div>
+          </div>
+          <div class="ade-summary-bar">
+            <div class="ade-sum-item"><span class="dot green"></span> Completati: <strong>28</strong></div>
+            <div class="ade-sum-item"><span class="dot orange"></span> In Corso: <strong>12</strong></div>
+            <div class="ade-sum-item"><span class="dot red"></span> Da Fare: <strong>4</strong></div>
+            <div class="ade-sum-item"><span class="dot gray"></span> N/A: <strong>11</strong></div>
+          </div>
+          <div class="table-card">
+            <div class="table-wrapper">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Adempimento</th>
+                    <th>Scadenza</th>
+                    <th>Stato</th>
+                    <th>Da Completare</th>
+                    <th>Da Spedire</th>
+                    <th>Note</th>
+                    <th class="col-actions">Azioni</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Alfa Srl</strong></td>
+                    <td>LIPE Feb 2026</td>
+                    <td>16/03/2026</td>
+                    <td><span class="status-badge done">✅ Completato</span></td>
+                    <td class="text-center">✓</td>
+                    <td class="text-center">✓</td>
+                    <td>—</td>
+                    <td class="col-actions"><button class="btn-icon">✏️</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Beta &amp; Associati</strong></td>
+                    <td>LIPE Feb 2026</td>
+                    <td>16/03/2026</td>
+                    <td><span class="status-badge progress">🔄 In Corso</span></td>
+                    <td class="text-center">✓</td>
+                    <td class="text-center">–</td>
+                    <td>Attesa firme</td>
+                    <td class="col-actions"><button class="btn-icon">✏️</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Gamma Trading</strong></td>
+                    <td>LIPE Feb 2026</td>
+                    <td>16/03/2026</td>
+                    <td><span class="status-badge todo">📌 Da Fare</span></td>
+                    <td class="text-center">–</td>
+                    <td class="text-center">–</td>
+                    <td>—</td>
+                    <td class="col-actions"><button class="btn-icon">✏️</button></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Rossi Mario</strong></td>
+                    <td>LIPE Feb 2026</td>
+                    <td>16/03/2026</td>
+                    <td><span class="status-badge na">⬜ N/A</span></td>
+                    <td class="text-center">—</td>
+                    <td class="text-center">—</td>
+                    <td>Forfettario</td>
+                    <td class="col-actions"><button class="btn-icon">✏️</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- INTERMEDIARI -->
+        <div id="view-intermediari" class="view" data-title="Intermediari">
+          <div class="view-header">
+            <div>
+              <h1 class="page-title">Intermediari</h1>
+              <p class="page-subtitle">Credenziali ADE degli intermediari abilitati</p>
+            </div>
+            <button class="btn-primary">+ Nuovo Intermediario</button>
+          </div>
+          <div class="cards-grid">
+            <div class="int-card">
+              <div class="int-card-top">
+                <div class="int-avatar">RS</div>
+                <div class="int-info">
+                  <span class="int-name">Rossi Stefano</span>
+                  <span class="int-cf mono">RSSSFN70A01H501T</span>
+                </div>
+                <div class="int-expiry warning">⚠️ 12 gg</div>
+              </div>
+              <div class="int-details">
+                <div class="int-detail-row"><span>Utente ADE</span><span class="mono">RSSSFN70A01H501T</span></div>
+                <div class="int-detail-row"><span>P.IVA</span><span class="mono">01234567890</span></div>
+                <div class="int-detail-row"><span>Scadenza</span><span>26/03/2026</span></div>
+              </div>
+              <div class="int-actions">
+                <button class="btn-secondary btn-sm">🤖 Login ADE</button>
+                <button class="btn-icon">✏️</button>
+              </div>
+            </div>
+            <div class="int-card">
+              <div class="int-card-top">
+                <div class="int-avatar">BM</div>
+                <div class="int-info">
+                  <span class="int-name">Bianchi Marco</span>
+                  <span class="int-cf mono">BNCMRC65B15F205X</span>
+                </div>
+                <div class="int-expiry ok">✅ 45 gg</div>
+              </div>
+              <div class="int-details">
+                <div class="int-detail-row"><span>Utente ADE</span><span class="mono">BNCMRC65B15F205X</span></div>
+                <div class="int-detail-row"><span>P.IVA</span><span class="mono">09876543210</span></div>
+                <div class="int-detail-row"><span>Scadenza</span><span>28/04/2026</span></div>
+              </div>
+              <div class="int-actions">
+                <button class="btn-secondary btn-sm">🤖 Login ADE</button>
+                <button class="btn-icon">✏️</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AUTOMAZIONI -->
+        <div id="view-automazioni" class="view" data-title="Automazioni">
+          <div class="view-header">
+            <div>
+              <h1 class="page-title">Automazioni</h1>
+              <p class="page-subtitle">Bot per accesso automatico al portale ADE</p>
+            </div>
+          </div>
+          <div class="auto-layout">
+            <div class="auto-panel">
+              <h3 class="panel-title">Configura Bot</h3>
+              <div class="form-group">
+                <label>Intermediario</label>
+                <select class="filter-select full">
+                  <option>Rossi Stefano (RSSSFN...)</option>
+                  <option>Bianchi Marco (BNCMRC...)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Modalità</label>
+                <select class="filter-select full">
+                  <option>Login diretto</option>
+                  <option>Login + delegato</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Azione</label>
+                <select class="filter-select full">
+                  <option>Verifica scadenza password</option>
+                  <option>Accesso area riservata</option>
+                </select>
+              </div>
+              <button class="btn-primary full" onclick="startBot()">🚀 Avvia Bot</button>
+              <button class="btn-danger full hidden" id="stop-bot-btn">⛔ Ferma Bot</button>
+            </div>
+            <div class="auto-log-panel">
+              <div class="log-header">
+                <h3 class="panel-title">Log in tempo reale</h3>
+                <span id="bot-status" class="bot-status idle">● Idle</span>
+              </div>
+              <div class="log-area" id="bot-log">
+                <div class="log-line dim">In attesa di avvio bot...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PRATICHE -->
+        <div id="view-pratiche" class="view" data-title="Pratiche">
+          <div class="view-header">
+            <div>
+              <h1 class="page-title">Pratiche</h1>
+              <p class="page-subtitle">Gestione pratiche e fascicoli clienti</p>
+            </div>
+            <button class="btn-primary">+ Nuova Pratica</button>
+          </div>
+          <div class="table-card">
+            <div class="table-toolbar">
+              <input class="search-input" type="text" placeholder="🔍  Cerca pratica..." />
+              <select class="filter-select"><option>Tutti gli Atti</option></select>
+              <select class="filter-select"><option>Tutte le Materie</option></select>
+              <select class="filter-select"><option>2026</option><option>2025</option></select>
+            </div>
+            <div class="table-wrapper">
+              <table class="data-table">
+                <thead><tr><th>Cliente</th><th>Atto</th><th>Materia</th><th>Data</th><th>Stato</th><th class="col-actions">Azioni</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>Alfa Srl</strong></td><td>Verbale CDA</td><td>Societario</td><td>10/01/2026</td><td><span class="status-badge done">Chiusa</span></td><td class="col-actions"><button class="btn-icon">✏️</button><button class="btn-icon">🗑️</button></td></tr>
+                  <tr><td><strong>Gamma Trading</strong></td><td>Contratto</td><td>Commerciale</td><td>15/02/2026</td><td><span class="status-badge progress">Aperta</span></td><td class="col-actions"><button class="btn-icon">✏️</button><button class="btn-icon">🗑️</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCADENZE -->
+        <div id="view-scadenze" class="view" data-title="Scadenze">
+          <div class="view-header"><h1 class="page-title">Scadenze</h1><p class="page-subtitle">Calendario scadenze fiscali</p></div>
+          <div class="coming-soon">🚧 Vista calendario in sviluppo</div>
+        </div>
+
+        <!-- CATALOGO -->
+        <div id="view-catalogo" class="view" data-title="Catalogo">
+          <div class="view-header"><h1 class="page-title">Catalogo Adempimenti</h1><p class="page-subtitle">Gestione catalogo e macro categoria</p></div>
+          <div class="coming-soon">🚧 Sezione in sviluppo</div>
+        </div>
+
+        <!-- ADER -->
+        <div id="view-ader" class="view" data-title="ADER">
+          <div class="view-header"><h1 class="page-title">ADER</h1><p class="page-subtitle">Gestione Agenzia delle Entrate Riscossione</p></div>
+          <div class="coming-soon">🚧 Sezione in sviluppo</div>
+        </div>
+
+        <!-- FATTURE -->
+        <div id="view-fatture" class="view" data-title="Fatture">
+          <div class="view-header"><h1 class="page-title">Fatture</h1><p class="page-subtitle">Gestione fatturazione</p></div>
+          <div class="coming-soon">🚧 Sezione in sviluppo</div>
+        </div>
+
+        <!-- IMPOSTAZIONI -->
+        <div id="view-impostazioni" class="view" data-title="Impostazioni">
+          <div class="view-header"><h1 class="page-title">Impostazioni</h1><p class="page-subtitle">Configurazione del sistema</p></div>
+          <div class="settings-tabs">
+            <button class="settings-tab active">👤 Utenti</button>
+            <button class="settings-tab">📁 Percorsi</button>
+            <button class="settings-tab">👥 Clienti</button>
+            <button class="settings-tab">📋 Adempimenti</button>
+          </div>
+          <div class="table-card">
+            <div class="table-wrapper">
+              <table class="data-table">
+                <thead><tr><th>Username</th><th>Ruolo</th><th class="col-actions">Azioni</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>ADMIN</strong></td><td><span class="badge">Admin</span></td><td class="col-actions"><button class="btn-icon">✏️</button></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
